@@ -20,3 +20,7 @@
  GET /about 200 in 146ms (next.js: 4ms, application-code: 143ms)
  GET /participate 200 in 523ms (next.js: 374ms, application-code: 149ms)
  GET / 200 in 73ms (next.js: 4ms, application-code: 69ms)
+ GET / 200 in 473ms (next.js: 178ms, application-code: 296ms)
+ GET /explore 200 in 202ms (next.js: 14ms, application-code: 188ms)
+ GET /teams/academic-secretariat 200 in 1520ms (next.js: 699ms, generate-params: 665ms, application-code: 155ms)
+ GET /projects/multilateral-ai-governance-charter 200 in 1122ms (next.js: 371ms, generate-params: 660ms, application-code: 90ms)
