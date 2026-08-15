@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -13,11 +13,17 @@ import {
   UPDATES_DATA,
   getPublishedOnly
 } from "@/lib/contentStore";
-import { Search, Filter, ArrowUpRight, ShieldAlert, X } from "lucide-react";
+import { getCreatorSession, CreatorSession } from "@/lib/creatorAuth";
+import { Search, Filter, ArrowUpRight, ShieldAlert, X, Plus } from "lucide-react";
 
 export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [session, setSession] = useState<CreatorSession | null>(null);
+
+  useEffect(() => {
+    setSession(getCreatorSession());
+  }, []);
 
   const categories = ["All", "Projects", "Programmes", "Publications", "Teams", "Organisations", "Updates"];
 
@@ -106,15 +112,24 @@ export default function ExplorePage() {
       <main className="flex-1 pt-32 pb-20 md:pt-40 md:pb-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <div className="max-w-3xl mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-[#2F9148] mb-4">
-              <Search className="w-3.5 h-3.5" />
-              <span>UNIFIED GLOBAL SEARCH ENGINE</span>
+          <div className="max-w-3xl mb-10 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-[#2F9148]">
+                <Search className="w-3.5 h-3.5" />
+                <span>UNIFIED GLOBAL SEARCH ENGINE</span>
+              </div>
+
+              {session?.isAuthorised && (
+                <span className="text-xs font-mono px-3 py-1 rounded-full bg-[#2F9148]/20 text-[#2F9148] border border-[#2F9148]/30">
+                  CREATOR MODE ACTIVE ({session.name})
+                </span>
+              )}
             </div>
+
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
               Explore NationsWorld Ecosystem
             </h1>
-            <p className="text-slate-300 text-sm sm:text-base mt-3">
+            <p className="text-slate-300 text-sm sm:text-base">
               Search and discover active public projects, secretariats, academic publications, programmes, and partner organisations.
             </p>
           </div>
