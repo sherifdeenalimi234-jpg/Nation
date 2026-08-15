@@ -25,3 +25,5 @@
  GET /teams/academic-secretariat 200 in 1520ms (next.js: 699ms, generate-params: 665ms, application-code: 155ms)
  GET /projects/multilateral-ai-governance-charter 200 in 1122ms (next.js: 371ms, generate-params: 660ms, application-code: 90ms)
  GET / 200 in 276ms (next.js: 18ms, application-code: 258ms)
+ GET / 200 in 1224ms (next.js: 832ms, application-code: 392ms)
+ POST /api/auth 200 in 1445ms (next.js: 1329ms, application-code: 116ms)

@@ -28,7 +28,6 @@ import {
   AlertCircle
 } from "lucide-react";
 import {
-  checkIsAuthorisedEmail,
   getCreatorSession,
   saveCreatorSession,
   clearCreatorSession,
@@ -36,8 +35,7 @@ import {
 } from "@/lib/creatorAuth";
 import {
   createDefaultFormState,
-  CreatorFormState,
-  generateUniqueContentId
+  CreatorFormState
 } from "@/lib/creationEngine";
 import { TEAMS_DATA } from "@/lib/contentStore";
 
@@ -78,6 +76,7 @@ export function Header() {
   const [formState, setFormState] = useState<CreatorFormState>(createDefaultFormState("Project"));
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [driveDestination, setDriveDestination] = useState<string>("04 — Projects");
 
   const pathname = usePathname();
 
@@ -92,34 +91,44 @@ export function Header() {
     if (saved) setSession(saved);
   }, []);
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError(null);
 
     if (!authEmailInput || !authEmailInput.includes("@")) {
-      setAuthError("Please enter a valid email address.");
+      setAuthError("Please enter a valid Google email address.");
       return;
     }
 
-    const isAuthorised = checkIsAuthorisedEmail(authEmailInput);
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: authEmailInput }),
+      });
 
-    if (!isAuthorised) {
-      setAuthError("Access Restricted: This account is not authorised to create or publish NationsWorld content.");
-      return;
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setAuthError(data.message || "Access Restricted: Account is not authorised.");
+        return;
+      }
+
+      const newSession: CreatorSession = {
+        email: authEmailInput,
+        name: authEmailInput.split("@")[0].toUpperCase(),
+        isAuthorised: true,
+        signedInAt: new Date().toISOString(),
+      };
+
+      saveCreatorSession(newSession);
+      setSession(newSession);
+      setShowAuthModal(false);
+      setAuthEmailInput("");
+      showToast("Creator Access Granted");
+    } catch (err) {
+      setAuthError("Server authentication check failed. Please try again.");
     }
-
-    const newSession: CreatorSession = {
-      email: authEmailInput,
-      name: authEmailInput.split("@")[0].toUpperCase(),
-      isAuthorised: true,
-      signedInAt: new Date().toISOString(),
-    };
-
-    saveCreatorSession(newSession);
-    setSession(newSession);
-    setShowAuthModal(false);
-    setAuthEmailInput("");
-    showToast("Creator Access Granted");
   };
 
   const handleSignOut = () => {
@@ -163,14 +172,40 @@ export function Header() {
     showToast("Draft Saved");
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (!formState.title || !formState.shortDescription) {
       showToast("Please fill in required fields (Title & Description)");
       return;
     }
-    setFormState((prev) => ({ ...prev, state: "Published" }));
-    setPortalMode("published");
-    showToast("Published Successfully");
+
+    try {
+      const res = await fetch("/api/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: session?.email,
+          sector: formState.type.toLowerCase(),
+          record: {
+            ...formState,
+            state: "Published",
+          },
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        showToast(data.message || "Publication Failed");
+        return;
+      }
+
+      setDriveDestination(data.driveDestination || "04 — Projects");
+      setFormState((prev) => ({ ...prev, state: "Published" }));
+      setPortalMode("published");
+      showToast("Published Successfully");
+    } catch (err) {
+      showToast("We couldn't complete the publication. Please try again.");
+    }
   };
 
   return (
@@ -378,7 +413,7 @@ export function Header() {
                   type="email"
                   value={authEmailInput}
                   onChange={(e) => setAuthEmailInput(e.target.value)}
-                  placeholder="e.g. secretariat@nationsworld.org"
+                  placeholder="e.g. sherifdeenalimititilope@gmail.com"
                   className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#2F9148]"
                 />
               </div>
@@ -674,7 +709,7 @@ export function Header() {
                 <CheckCircle2 className="w-12 h-12 text-[#2F9148] mx-auto" />
                 <div className="text-xl font-bold text-white">Published Successfully</div>
                 <p className="text-xs text-slate-300 max-w-md mx-auto">
-                  Your record <span className="font-mono text-[#2F9148]">{formState.id}</span> is now active and available across the NationsWorld ecosystem.
+                  Your record <span className="font-mono text-[#2F9148]">{formState.id}</span> was processed by the server pipeline and stored in Drive Folder <span className="font-mono text-white">{driveDestination}</span>.
                 </p>
 
                 {formState.whatsappContact && (
