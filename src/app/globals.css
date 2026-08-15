@@ -2,27 +2,30 @@
 
 @layer base {
   :root {
-    --bg-main: #060911;
-    --bg-card: #0D1322;
-    --bg-card-hover: #131B30;
-    --bg-card-active: #19243E;
+    /* Exact NationsWorld Spec Palette */
+    --navy-deep: #002446;
+    --navy-card: #001933;
+    --navy-card-hover: #00305c;
+    --navy-card-active: #003b70;
 
-    --brand-primary: #1e62ff;
-    --brand-primary-hover: #3b78ff;
-    --brand-accent: #00f0ff;
-    --brand-gold: #f59e0b;
-    --brand-emerald: #10b981;
+    --green-nw: #2F9148;
+    --green-nw-hover: #37a854;
+    --green-nw-light: rgba(47, 145, 72, 0.15);
 
-    --text-primary: #f8fafc;
+    --text-primary: #ffffff;
     --text-secondary: #94a3b8;
     --text-tertiary: #64748b;
 
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-accent: rgba(30, 98, 255, 0.3);
-    --border-accent-strong: rgba(0, 240, 255, 0.5);
+    --bg-main: #00172e;
+    --bg-surface-light: #f8fafc;
+    --text-on-light: #002446;
+
+    --border-subtle: rgba(255, 255, 255, 0.1);
+    --border-accent: rgba(47, 145, 72, 0.4);
+    --border-accent-strong: rgba(47, 145, 72, 0.8);
 
     --status-info: #0ea5e9;
-    --status-success: #10b981;
+    --status-success: #2F9148;
     --status-warning: #f59e0b;
     --status-error: #ef4444;
   }
@@ -65,21 +68,21 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #060911;
+  background: #00172e;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #00305c;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #2F9148;
 }
 
 /* Custom Selection */
 ::selection {
-  background: rgba(30, 98, 255, 0.35);
+  background: rgba(47, 145, 72, 0.4);
   color: #ffffff;
 }
 
@@ -87,8 +90,8 @@
 .bg-grid-pattern {
   background-size: 40px 40px;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }
 
 .bg-dot-pattern {
@@ -96,11 +99,6 @@
   background-size: 24px 24px;
 }
 
-/* Subtle glow effects */
-.glow-primary {
-  box-shadow: 0 0 40px -10px rgba(30, 98, 255, 0.25);
-}
-
-.glow-accent {
-  box-shadow: 0 0 40px -10px rgba(0, 240, 255, 0.2);
+.glow-nw {
+  box-shadow: 0 0 40px -10px rgba(47, 145, 72, 0.3);
 }
