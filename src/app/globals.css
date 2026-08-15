@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-main: #060911;
+    --bg-card: #0D1322;
+    --bg-card-hover: #131B30;
+    --bg-card-active: #19243E;
+
+    --brand-primary: #1e62ff;
+    --brand-primary-hover: #3b78ff;
+    --brand-accent: #00f0ff;
+    --brand-gold: #f59e0b;
+    --brand-emerald: #10b981;
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-tertiary: #64748b;
+
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-accent: rgba(30, 98, 255, 0.3);
+    --border-accent-strong: rgba(0, 240, 255, 0.5);
+
+    --status-info: #0ea5e9;
+    --status-success: #10b981;
+    --status-warning: #f59e0b;
+    --status-error: #ef4444;
+  }
+
+  * {
+    border-color: var(--border-subtle);
+  }
+
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    overflow-x: hidden;
+  }
+
+  /* Accessibility - Prefers Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060911;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Custom Selection */
+::selection {
+  background: rgba(30, 98, 255, 0.35);
+  color: #ffffff;
+}
+
+/* Grid overlay background effect for institutional aesthetic */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Subtle glow effects */
+.glow-primary {
+  box-shadow: 0 0 40px -10px rgba(30, 98, 255, 0.25);
+}
+
+.glow-accent {
+  box-shadow: 0 0 40px -10px rgba(0, 240, 255, 0.2);
+}
