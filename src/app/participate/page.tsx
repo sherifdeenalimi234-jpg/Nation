@@ -13,52 +13,28 @@ import {
   FileText,
   Sparkles,
   ArrowRight,
-  CheckCircle2
+  CheckCircle2,
+  Lightbulb,
+  HeartHandshake,
+  Award,
+  BookMarked,
+  UserCheck,
+  ShieldCheck,
+  HelpCircle
 } from "lucide-react";
 
-const PATHWAYS = [
-  {
-    title: "Join Youth Leadership Network",
-    desc: "Connect with cross-border youth working groups and regional academic secretariats.",
-    icon: Users,
-    badge: "Community & Network",
-    action: "Apply to Join",
-  },
-  {
-    title: "Co-Author Research Publications",
-    desc: "Submit papers, policy briefs, and whitepapers to the Academic Secretariat peer review pipeline.",
-    icon: FileText,
-    badge: "Open Scholarship",
-    action: "Submit Abstract",
-  },
-  {
-    title: "Enroll in Fellowship Programmes",
-    desc: "Participate in intensive 6-month accelerators and cross-border leadership academies.",
-    icon: GraduationCap,
-    badge: "Education Cohorts",
-    action: "View Programmes",
-  },
-  {
-    title: "Lead an Active Project Initiative",
-    desc: "Deploy solutions tackling climate resilience, education access, and AI ethics.",
-    icon: FolderGit2,
-    badge: "Project Deployment",
-    action: "Submit Project Idea",
-  },
-  {
-    title: "Institutional Alliance & Partnership",
-    desc: "Partner your university, research lab, or multilateral organisation with NationsWorld.",
-    icon: Building2,
-    badge: "Institutional Alliance",
-    action: "Partner with Us",
-  },
-  {
-    title: "Scholarship & Research Grants",
-    desc: "Access competitive research funding and institutional backing for high-impact studies.",
-    icon: Sparkles,
-    badge: "Capital & Support",
-    action: "Apply for Support",
-  },
+const APPROVED_PATHWAYS = [
+  { title: "Membership", desc: "Access the broader NationsWorld global exposure ecosystem and network.", icon: UserCheck, badge: "Pathway 01" },
+  { title: "Volunteering", desc: "Contribute time and energy to regional secretariats and community summits.", icon: HeartHandshake, badge: "Pathway 02" },
+  { title: "Research", desc: "Engage in peer-reviewed scholarship, whitepapers, and field studies.", icon: BookOpen, badge: "Pathway 03" },
+  { title: "Projects", desc: "Collaborate on active technology, climate, and governance initiatives.", icon: FolderGit2, badge: "Pathway 04" },
+  { title: "Programmes", desc: "Participate in global fellowships, workshops, and diplomatic dialogues.", icon: GraduationCap, badge: "Pathway 05" },
+  { title: "Courses", desc: "Enroll in open-access educational modules and leadership masterclasses.", icon: BookMarked, badge: "Pathway 06" },
+  { title: "Idea Proposals", desc: "Propose innovative ideas for secretarial review (Ideas are reviewed prior to official project adoption).", icon: Lightbulb, badge: "Pathway 07" },
+  { title: "Partnerships", desc: "Connect universities, institutes, or coalitions to the NationsWorld ecosystem.", icon: Building2, badge: "Pathway 08" },
+  { title: "Leadership", desc: "Take on governance, secretariat, or regional chapter leadership roles.", icon: Award, badge: "Pathway 09" },
+  { title: "Publishing", desc: "Publish accredited papers and policy dispatches with institutional backing.", icon: FileText, badge: "Pathway 10" },
+  { title: "Expertise Contribution", desc: "Offer expert advisory, peer review, or mentorship to young global scholars.", icon: Sparkles, badge: "Pathway 11" },
 ];
 
 export default function ParticipatePage() {
@@ -73,20 +49,32 @@ export default function ParticipatePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 
           <div className="max-w-3xl space-y-4">
-            <div className="text-xs font-mono uppercase tracking-widest text-[#2F9148] font-bold">
-              ENGAGEMENT & PARTICIPATION
+            <div className="text-xs font-mono uppercase tracking-widest text-[#2F9148] font-bold flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4" />
+              <span>11 APPROVED PARTICIPATION PATHWAYS</span>
             </div>
             <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white">
-              Participate in NationsWorld
+              Participation & Engagement
             </h1>
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-              Participation is designed as a direct invitation to co-create, research, lead, and contribute to global human advancement. Choose a pathway below.
+              NationsWorld is an open ecosystem designed for global exposure and human development. Participation is not limited to a single membership tier—explore all 11 active pathways below.
+            </p>
+          </div>
+
+          {/* Institutional Note on Idea Proposals vs Official Projects */}
+          <div className="p-6 rounded-2xl bg-[#002446] border border-white/10 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-mono text-[#2F9148] uppercase font-bold">
+              <HelpCircle className="w-4 h-4" />
+              <span>Institutional Note: Idea Proposals vs Official Projects</span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed max-w-4xl">
+              Submitted ideas remain designated as <span className="text-white font-semibold">Submitted Ideas</span> during initial secretarial evaluation. They are formally adopted as <span className="text-white font-semibold font-mono">Official NationsWorld Projects</span> only after peer review, secretariat approval, and resource allocation.
             </p>
           </div>
 
           {/* Pathways Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PATHWAYS.map((p) => {
+            {APPROVED_PATHWAYS.map((p) => {
               const Icon = p.icon;
               return (
                 <div
@@ -116,7 +104,7 @@ export default function ParticipatePage() {
                     }}
                     className="mt-6 w-full py-2.5 px-4 rounded-xl bg-[#2F9148] hover:bg-[#37a854] text-xs font-semibold text-white transition-colors flex items-center justify-center gap-2"
                   >
-                    <span>{p.action}</span>
+                    <span>Select Pathway</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -180,11 +168,15 @@ export default function ParticipatePage() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-mono text-slate-300 block mb-1">Statement of Purpose / Proposal</label>
+                    <label className="text-xs font-mono text-slate-300 block mb-1">Proposal / Intent Statement</label>
                     <textarea
                       required
                       rows={3}
-                      placeholder="Briefly describe your objectives or research focus..."
+                      placeholder={
+                        selectedPathway === "Idea Proposals"
+                          ? "Detail your idea proposal (will be designated as a Submitted Idea prior to secretariat adoption)..."
+                          : "Briefly describe your objectives or research focus..."
+                      }
                       className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
                     />
                   </div>
@@ -193,16 +185,16 @@ export default function ParticipatePage() {
                     type="submit"
                     className="px-6 py-2.5 rounded-xl bg-[#2F9148] hover:bg-[#37a854] text-xs font-semibold text-white transition-colors"
                   >
-                    Submit Official Intent
+                    Submit Pathway Request
                   </button>
                 </form>
               ) : (
                 <div className="p-6 rounded-2xl bg-[#00172e] border border-[#2F9148] flex items-center gap-4">
                   <CheckCircle2 className="w-8 h-8 text-[#2F9148] shrink-0" />
                   <div>
-                    <div className="text-sm font-bold text-white">Application Received</div>
+                    <div className="text-sm font-bold text-white">Participation Intent Received</div>
                     <p className="text-xs text-slate-300 mt-0.5">
-                      Your intent has been registered with the NationsWorld Academic Secretariat. An official dispatch will be issued to your email.
+                      Your response has been transmitted to the NationsWorld Secretariat. An official dispatch will follow.
                     </p>
                   </div>
                 </div>

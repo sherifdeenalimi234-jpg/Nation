@@ -22,21 +22,21 @@ const OFFICIAL_SOCIALS = [
   {
     name: "YouTube",
     handle: "@nations_world",
-    href: "https://youtube.com/@nations_world",
+    href: "https://www.youtube.com/@nations_world",
     icon: Video,
     color: "hover:text-red-400 hover:border-red-500/40",
   },
   {
     name: "Instagram",
     handle: "@nationsworld.global",
-    href: "https://instagram.com/nationsworld.global",
+    href: "https://www.instagram.com/nationsworld.global?igsh=dGp6bWsyYmZkaXRr",
     icon: Camera,
     color: "hover:text-pink-400 hover:border-pink-500/40",
   },
   {
     name: "WhatsApp Channel",
     handle: "NationsWorld Channel",
-    href: "https://whatsapp.com/channel/nationsworld",
+    href: "https://whatsapp.com/channel/0029Vb7xfyCICVflI0qMKQ31",
     icon: MessageCircle,
     color: "hover:text-emerald-400 hover:border-emerald-500/40",
   },
@@ -66,24 +66,20 @@ export function Footer() {
             </Link>
 
             <p className="text-sm text-slate-400 max-w-md leading-relaxed">
-              NationsWorld is an international youth-focused organisation and ecosystem centered on visionary advancement, human development, leadership, education, research, innovation, and global collaboration.
+              NationsWorld of Visionary Advancement is an international youth-focused organisation and ecosystem centered on visionary advancement, human development, leadership, education, research, innovation, and global collaboration.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-1 text-xs font-mono text-slate-400">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#00f0ff]" />
-                Global Institution
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                Youth-Centric Ecosystem
+                Uniting Nations. Advancing Humanity.
               </span>
             </div>
 
             {/* Official External Channels */}
             <div className="pt-3 space-y-2">
               <div className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
-                Official Channels
+                Official External Channels
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 {OFFICIAL_SOCIALS.map((soc) => {
@@ -176,7 +172,7 @@ export function Footer() {
         {/* Bottom Legal & Meta */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
           <div>
-            © {new Date().getFullYear()} NationsWorld Organisation. All rights reserved.
+            © {new Date().getFullYear()} NationsWorld of Visionary Advancement. All rights reserved.
           </div>
           <div className="flex flex-wrap items-center gap-6">
             <span className="hover:text-slate-400 cursor-pointer transition-colors">

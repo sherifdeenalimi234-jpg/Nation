@@ -21,7 +21,7 @@ export default function AboutPage() {
           <div className="max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2F9148]/10 border border-[#2F9148]/30 text-xs font-mono text-[#2F9148]">
               <ShieldCheck className="w-4 h-4" />
-              <span>ABOUT NATIONSWORLD INSTITUTION</span>
+              <span>NATIONSWORLD OF VISIONARY ADVANCEMENT</span>
             </div>
 
             <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white">
@@ -29,19 +29,19 @@ export default function AboutPage() {
             </h1>
 
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-              NationsWorld is an international youth-focused organisation and ecosystem centered on visionary advancement, human development, leadership, education, research, innovation, and global collaboration.
+              NationsWorld of Visionary Advancement is an international youth-focused organisation and ecosystem centered on visionary advancement, human development, leadership, education, research, innovation, and global collaboration.
             </p>
           </div>
 
           {/* Vision & Mission Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="p-8 rounded-3xl bg-[#002446] border border-white/10 space-y-4">
               <div className="p-3 rounded-2xl bg-[#2F9148]/20 text-[#2F9148] w-max">
                 <Globe className="w-6 h-6" />
               </div>
-              <h2 className="text-2xl font-bold text-white">Our Vision</h2>
+              <h2 className="text-2xl font-bold text-white">Central Mission</h2>
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                To build a global digital environment for people who believe the future can be deliberately built — establishing a new paradigm of youth leadership, accredited research, and cross-border cooperation.
+                <strong className="text-white">Global Exposure and Human Development.</strong> NationsWorld creates pathways through which people encounter knowledge, opportunities, networks, cultures, ideas, technology, research, and leadership that contribute to human advancement.
               </p>
             </div>
 
@@ -49,9 +49,19 @@ export default function AboutPage() {
               <div className="p-3 rounded-2xl bg-[#2F9148]/20 text-[#2F9148] w-max">
                 <Award className="w-6 h-6" />
               </div>
-              <h2 className="text-2xl font-bold text-white">Our Mission</h2>
+              <h2 className="text-2xl font-bold text-white">Organisational Purpose</h2>
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                To equip young scholars, leaders, and institutions with high-trust networks, open scholarship, research grants, and action frameworks that deliver tangible societal impact worldwide.
+                <strong className="text-white">Development of humanity.</strong> Dedicated to equipping young scholars, leaders, and institutions with high-trust networks, open scholarship, research grants, and action frameworks that deliver tangible societal impact worldwide.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-3xl bg-[#002446] border border-white/10 space-y-4">
+              <div className="p-3 rounded-2xl bg-[#2F9148]/20 text-[#2F9148] w-max">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <h2 className="text-2xl font-bold text-white">Meaning of Global Exposure</h2>
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                Global exposure includes access to opportunities, knowledge, cultures, networks, conferences, organisations, ideas, technology, research, leadership, and careers across an open ecosystem.
               </p>
             </div>
           </div>
@@ -60,11 +70,11 @@ export default function AboutPage() {
           <div className="space-y-8">
             <div className="max-w-2xl">
               <div className="text-xs font-mono uppercase tracking-widest text-[#2F9148]">
-                Institutional Philosophy
+                Official Institutional Philosophy
               </div>
               <h2 className="text-3xl font-bold text-white mt-1">The 17 Core Values</h2>
               <p className="text-slate-300 text-sm mt-2">
-                Click any core value below to view its institutional definition.
+                Click any core value below to view its official institutional definition.
               </p>
             </div>
 
