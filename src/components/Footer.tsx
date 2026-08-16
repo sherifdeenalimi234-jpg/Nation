@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Globe, ArrowUpRight, ShieldCheck, Mail, Sparkles, MessageCircle, Video, Camera } from "lucide-react";
+import { Globe, ArrowUpRight, ShieldCheck, Mail, MessageCircle, Video, Camera } from "lucide-react";
+import { OFFICIAL_SOCIAL_CONFIG } from "@/lib/socialConfig";
 
 const FOOTER_SECTORS = [
   { name: "Explore Directory", href: "/explore" },
@@ -20,23 +21,23 @@ const FOOTER_INITIATIVES = [
 
 const OFFICIAL_SOCIALS = [
   {
-    name: "YouTube",
-    handle: "@nations_world",
-    href: "https://www.youtube.com/@nations_world",
+    name: OFFICIAL_SOCIAL_CONFIG.youtube.name,
+    handle: OFFICIAL_SOCIAL_CONFIG.youtube.handle,
+    href: OFFICIAL_SOCIAL_CONFIG.youtube.url,
     icon: Video,
     color: "hover:text-red-400 hover:border-red-500/40",
   },
   {
-    name: "Instagram",
-    handle: "@nationsworld.global",
-    href: "https://www.instagram.com/nationsworld.global?igsh=dGp6bWsyYmZkaXRr",
+    name: OFFICIAL_SOCIAL_CONFIG.instagram.name,
+    handle: OFFICIAL_SOCIAL_CONFIG.instagram.handle,
+    href: OFFICIAL_SOCIAL_CONFIG.instagram.url,
     icon: Camera,
     color: "hover:text-pink-400 hover:border-pink-500/40",
   },
   {
-    name: "WhatsApp Channel",
-    handle: "NationsWorld Channel",
-    href: "https://whatsapp.com/channel/0029Vb7xfyCICVflI0qMKQ31",
+    name: OFFICIAL_SOCIAL_CONFIG.whatsapp.name,
+    handle: OFFICIAL_SOCIAL_CONFIG.whatsapp.handle,
+    href: OFFICIAL_SOCIAL_CONFIG.whatsapp.url,
     icon: MessageCircle,
     color: "hover:text-emerald-400 hover:border-emerald-500/40",
   },
