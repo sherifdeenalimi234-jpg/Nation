@@ -27,7 +27,6 @@ var FOLDER_MAPPING = {
 function doGet(e) {
   try {
     var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : "fetchAll";
     var targetType = (e && e.parameter && e.parameter.type) ? e.parameter.type : null;
 
     var result = {};
@@ -46,7 +45,10 @@ function doGet(e) {
               for (var j = 0; j < headers.length; j++) {
                 rowObj[headers[j]] = data[i][j];
               }
-              rows.push(rowObj);
+              // Return published records only
+              if (rowObj["Publication Status"] === "Published" || rowObj["Publication Status"] === "published" || rowObj["State"] === "Published") {
+                rows.push(rowObj);
+              }
             }
             result[sheetName] = rows;
           } else {
@@ -56,15 +58,9 @@ function doGet(e) {
       }
     });
 
-    return ContentService.createTextOutput(JSON.stringify({
-      success: true,
-      data: result
-    })).setMimeType(ContentService.MimeType.JSON);
+    return responseJSON({ success: true, data: result });
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({
-      success: false,
-      error: err.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
+    return responseJSON({ success: false, error: err.toString() });
   }
 }
 
@@ -90,20 +86,31 @@ function doPost(e) {
 function handleFileUpload(data) {
   var fileData = data.file; // { name, mimeType, base64Data }
   var contentType = data.contentType || "Projects";
+  var recordId = data.recordId || "NW-FILE";
 
   if (!fileData || !fileData.base64Data) {
     return responseJSON({ success: false, message: "No file content provided" });
   }
 
-  var folderName = FOLDER_MAPPING[contentType] || "09 — Submissions";
+  var parentFolderName = FOLDER_MAPPING[contentType] || "09 — Submissions";
   var rootFolder = DriveApp.getFolderById(ROOT_DRIVE_FOLDER_ID);
-  var targetFolder;
 
-  var subfolders = rootFolder.getFoldersByName(folderName);
+  // Find or create parent sector folder (e.g. 04 — Projects)
+  var parentFolder;
+  var subfolders = rootFolder.getFoldersByName(parentFolderName);
   if (subfolders.hasNext()) {
-    targetFolder = subfolders.next();
+    parentFolder = subfolders.next();
   } else {
-    targetFolder = rootFolder.createFolder(folderName);
+    parentFolder = rootFolder.createFolder(parentFolderName);
+  }
+
+  // Create item subfolder using Record ID (e.g. NW-P-0001)
+  var targetFolder;
+  var itemFolders = parentFolder.getFoldersByName(recordId);
+  if (itemFolders.hasNext()) {
+    targetFolder = itemFolders.next();
+  } else {
+    targetFolder = parentFolder.createFolder(recordId);
   }
 
   var decodedBytes = Utilities.base64Decode(fileData.base64Data);
@@ -116,7 +123,7 @@ function handleFileUpload(data) {
     fileId: createdFile.getId(),
     fileUrl: createdFile.getUrl(),
     downloadUrl: createdFile.getDownloadUrl(),
-    folderName: folderName
+    folderName: parentFolderName + "/" + recordId
   });
 }
 
@@ -144,7 +151,8 @@ function handleWriteRecord(data) {
     success: true,
     sheetName: sheetName,
     recordId: record.id,
-    message: "Record successfully saved to Google Sheets"
+    publicationStatus: record.publicationStatus || record.state || "Published",
+    message: "Record successfully written to Google Sheets"
   });
 }
 
@@ -183,15 +191,16 @@ function createSheetHeaders(sheet, sheetName) {
 }
 
 function formatRecordToRow(sheetName, r) {
+  var now = new Date().toISOString();
   if (sheetName === "Projects") {
     return [
-      r.id || "", r.title || "", r.shortDescription || "", r.fullDescription || "",
+      r.id || "", r.projectTitle || r.title || "", r.shortDescription || "", r.fullDescription || "",
       r.category || "", r.leadTeam || r.leadTeamSlug || "", r.relatedOrganisation || "", r.relatedProgramme || "",
-      r.location || "", r.status || r.projectStatus || "", r.startDate || "", r.endDate || "",
+      r.location || "", r.projectStatus || r.status || "", r.startDate || "", r.endDate || "",
       r.objectives || "", r.keyActivities || "", r.targetBeneficiaries || "", r.expectedOutcomes || "",
       r.impactInformation || "", r.externalLink || r.website || "", r.mainImageUrl || r.coverImage || "",
-      r.supportingDocumentsUrl || r.fileUrl || "", r.creator || "", r.createdDate || r.date || "",
-      r.lastUpdated || r.date || "", r.state || r.publicationStatus || "Published"
+      r.supportingDocumentsUrl || r.fileUrl || "", r.creator || "", r.createdDate || now,
+      r.lastUpdated || now, r.publicationStatus || r.state || "Published"
     ];
   } else if (sheetName === "Organisations") {
     return [
@@ -199,8 +208,8 @@ function formatRecordToRow(sheetName, r) {
       r.logoUrl || r.mainImageUrl || "", r.shortDescription || "", r.fullDescription || "",
       r.mission || "", r.focusAreas || "", r.location || "", r.website || "",
       r.contactInfo || "", r.relatedTeams || "", r.relatedProgrammes || "", r.relatedProjects || "",
-      r.documentsUrl || r.fileUrl || "", r.creator || "", r.createdDate || r.date || "",
-      r.lastUpdated || r.date || "", r.state || r.publicationStatus || "Published"
+      r.documentsUrl || r.fileUrl || "", r.creator || "", r.createdDate || now,
+      r.lastUpdated || now, r.publicationStatus || r.state || "Published"
     ];
   } else if (sheetName === "Programmes") {
     return [
@@ -208,10 +217,10 @@ function formatRecordToRow(sheetName, r) {
       r.shortDescription || "", r.fullDescription || "", r.purpose || "", r.objectives || "",
       r.leadTeam || r.leadTeamSlug || "", r.relatedOrganisation || "", r.relatedProject || "",
       r.targetParticipants || "", r.eligibility || "", r.location || "", r.startDate || r.date || "",
-      r.endDate || "", r.registrationInfo || "", r.status || r.programmeStatus || "",
+      r.endDate || "", r.registrationInfo || "", r.programmeStatus || r.status || "",
       r.externalRegistrationLink || r.externalLink || "", r.mainImageUrl || r.coverImage || "",
-      r.supportingDocumentsUrl || r.fileUrl || "", r.creator || "", r.createdDate || r.date || "",
-      r.lastUpdated || r.date || "", r.state || r.publicationStatus || "Published"
+      r.supportingDocumentsUrl || r.fileUrl || "", r.creator || "", r.createdDate || now,
+      r.lastUpdated || now, r.publicationStatus || r.state || "Published"
     ];
   } else if (sheetName === "Teams") {
     return [
@@ -219,8 +228,8 @@ function formatRecordToRow(sheetName, r) {
       r.shortDescription || "", r.fullDescription || "", r.focusAreas || "",
       r.teamImageUrl || r.mainImageUrl || "", r.leadershipInfo || "", r.projects || "",
       r.programmes || "", r.publications || "", r.updates || "", r.impact || "",
-      r.creator || "", r.createdDate || r.date || "", r.lastUpdated || r.date || "",
-      r.state || r.publicationStatus || "Published"
+      r.creator || "", r.createdDate || now, r.lastUpdated || now,
+      r.publicationStatus || r.state || "Published"
     ];
   } else if (sheetName === "Publications") {
     return [
@@ -230,8 +239,8 @@ function formatRecordToRow(sheetName, r) {
       r.publicationDate || r.date || "", r.topic || r.category || "",
       r.relatedTeam || r.leadTeamSlug || "", r.relatedOrganisation || "", r.relatedProject || r.relatedProjectSlug || "",
       r.coverImageUrl || r.coverImage || "", r.publicationFileUrl || r.fileUrl || "",
-      r.externalUrl || r.externalLink || "", r.creator || "", r.createdDate || r.date || "",
-      r.lastUpdated || r.date || "", r.state || r.publicationStatus || "Published"
+      r.externalUrl || r.externalLink || "", r.creator || "", r.createdDate || now,
+      r.lastUpdated || now, r.publicationStatus || r.state || "Published"
     ];
   } else if (sheetName === "Updates") {
     return [
@@ -239,8 +248,8 @@ function formatRecordToRow(sheetName, r) {
       r.fullContent || r.fullDescription || "", r.updateCategory || r.type || r.category || "",
       r.date || "", r.relatedProject || r.relatedSlug || "", r.relatedProgramme || "",
       r.relatedTeam || "", r.featuredImageUrl || r.imageUrl || "", r.supportingMediaUrl || r.fileUrl || "",
-      r.externalLink || "", r.creator || "", r.createdDate || r.date || "",
-      r.lastUpdated || r.date || "", r.state || r.publicationStatus || "Published"
+      r.externalLink || "", r.creator || "", r.createdDate || now,
+      r.lastUpdated || now, r.publicationStatus || r.state || "Published"
     ];
   } else if (sheetName === "Impact") {
     return [
@@ -249,8 +258,8 @@ function formatRecordToRow(sheetName, r) {
       r.relatedTeam || "", r.impactArea || "", r.beneficiaries || "",
       r.geographicScope || "", r.verifiedMetrics || r.value || "", r.evidenceDocumentsUrl || r.fileUrl || "",
       r.imagesUrl || r.mainImageUrl || "", r.periodDate || r.date || r.lastUpdated || "",
-      r.creator || "", r.createdDate || r.date || "", r.lastUpdated || r.date || "",
-      r.state || r.publicationStatus || "Published"
+      r.creator || "", r.createdDate || now, r.lastUpdated || now,
+      r.publicationStatus || r.state || "Published"
     ];
   }
   return [];
