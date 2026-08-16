@@ -4,10 +4,32 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PUBLICATIONS_DATA, TEAMS_DATA } from "@/lib/contentStore";
-import { FileText, ArrowLeft, Calendar, User, Download, ExternalLink } from "lucide-react";
+import { FileText, ArrowLeft, Calendar, User, Download } from "lucide-react";
+import type { Metadata } from "next";
 
 export function generateStaticParams() {
   return PUBLICATIONS_DATA.map((pub) => ({ slug: pub.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const pub = PUBLICATIONS_DATA.find((p) => p.slug === slug);
+  if (!pub) return {};
+
+  return {
+    title: `${pub.title} — NationsWorld Research`,
+    description: pub.description,
+    openGraph: {
+      title: pub.title,
+      description: pub.description,
+      type: "article",
+      siteName: "NationsWorld",
+    },
+  };
 }
 
 export default async function PublicationDetailPage({

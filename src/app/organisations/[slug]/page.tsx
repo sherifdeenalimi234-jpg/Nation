@@ -5,9 +5,31 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ORGANISATIONS_DATA } from "@/lib/contentStore";
 import { Building2, ArrowLeft, Globe, MapPin, ExternalLink } from "lucide-react";
+import type { Metadata } from "next";
 
 export function generateStaticParams() {
   return ORGANISATIONS_DATA.map((o) => ({ slug: o.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const org = ORGANISATIONS_DATA.find((o) => o.slug === slug);
+  if (!org) return {};
+
+  return {
+    title: `${org.name} — Partner Organisation`,
+    description: org.description,
+    openGraph: {
+      title: org.name,
+      description: org.description,
+      type: "article",
+      siteName: "NationsWorld",
+    },
+  };
 }
 
 export default async function OrganisationDetailPage({

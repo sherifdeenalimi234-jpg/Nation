@@ -7,8 +7,11 @@ export interface CreatorSession {
   signedInAt: string;
 }
 
-// Default Authorised Creators List (Can be configured securely via environment)
+// Default Authorised Creators List
 const AUTHORISED_CREATOR_EMAILS = [
+  "sherifdeenalimititilope@gmail.com",
+  "kudiratlolade1999@gmail.com",
+  "sherifdeenalimi234@gmail.com",
   "admin@nationsworld.org",
   "secretariat@nationsworld.org",
   "editor@nationsworld.org",

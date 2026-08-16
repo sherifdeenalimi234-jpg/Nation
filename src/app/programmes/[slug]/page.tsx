@@ -5,9 +5,31 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PROGRAMMES_DATA, TEAMS_DATA } from "@/lib/contentStore";
 import { GraduationCap, ArrowLeft, Calendar, MapPin, Users, ArrowUpRight } from "lucide-react";
+import type { Metadata } from "next";
 
 export function generateStaticParams() {
   return PROGRAMMES_DATA.map((pr) => ({ slug: pr.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const programme = PROGRAMMES_DATA.find((pr) => pr.slug === slug);
+  if (!programme) return {};
+
+  return {
+    title: `${programme.title} — NationsWorld Programme`,
+    description: programme.description,
+    openGraph: {
+      title: programme.title,
+      description: programme.description,
+      type: "article",
+      siteName: "NationsWorld",
+    },
+  };
 }
 
 export default async function ProgrammeDetailPage({

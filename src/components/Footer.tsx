@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Globe, ArrowUpRight, ShieldCheck, Mail, Sparkles } from "lucide-react";
+import { Globe, ArrowUpRight, ShieldCheck, Mail, Sparkles, MessageCircle, Video, Camera } from "lucide-react";
 
 const FOOTER_SECTORS = [
   { name: "Explore Directory", href: "/explore" },
@@ -18,6 +18,30 @@ const FOOTER_INITIATIVES = [
   { name: "Impact Metrics", href: "/impact" },
 ];
 
+const OFFICIAL_SOCIALS = [
+  {
+    name: "YouTube",
+    handle: "@nations_world",
+    href: "https://youtube.com/@nations_world",
+    icon: Video,
+    color: "hover:text-red-400 hover:border-red-500/40",
+  },
+  {
+    name: "Instagram",
+    handle: "@nationsworld.global",
+    href: "https://instagram.com/nationsworld.global",
+    icon: Camera,
+    color: "hover:text-pink-400 hover:border-pink-500/40",
+  },
+  {
+    name: "WhatsApp Channel",
+    handle: "NationsWorld Channel",
+    href: "https://whatsapp.com/channel/nationsworld",
+    icon: MessageCircle,
+    color: "hover:text-emerald-400 hover:border-emerald-500/40",
+  },
+];
+
 export function Footer() {
   return (
     <footer className="bg-[#04060d] border-t border-white/10 relative overflow-hidden pt-16 pb-12 text-slate-400">
@@ -28,7 +52,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-white/10">
 
-          {/* Brand Info */}
+          {/* Brand Info & Social Links */}
           <div className="lg:col-span-5 space-y-4">
             <Link href="/" className="inline-flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1e62ff] to-[#00f0ff] p-[1px]">
@@ -45,7 +69,7 @@ export function Footer() {
               NationsWorld is an international youth-focused organisation and ecosystem centered on visionary advancement, human development, leadership, education, research, innovation, and global collaboration.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-mono text-slate-400">
+            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs font-mono text-slate-400">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#00f0ff]" />
                 Global Institution
@@ -54,6 +78,32 @@ export function Footer() {
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 Youth-Centric Ecosystem
               </span>
+            </div>
+
+            {/* Official External Channels */}
+            <div className="pt-3 space-y-2">
+              <div className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                Official Channels
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {OFFICIAL_SOCIALS.map((soc) => {
+                  const Icon = soc.icon;
+                  return (
+                    <a
+                      key={soc.name}
+                      href={soc.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 transition-all ${soc.color}`}
+                      title={`Visit NationsWorld on ${soc.name}`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      <span>{soc.handle}</span>
+                      <ArrowUpRight className="w-3 h-3 text-slate-500" />
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </div>
 

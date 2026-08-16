@@ -5,9 +5,31 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PROJECTS_DATA, TEAMS_DATA, PUBLICATIONS_DATA, getPublishedOnly } from "@/lib/contentStore";
 import { FolderGit2, ArrowLeft, Users, FileText, ArrowUpRight, MapPin, Tag } from "lucide-react";
+import type { Metadata } from "next";
 
 export function generateStaticParams() {
   return PROJECTS_DATA.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const project = PROJECTS_DATA.find((p) => p.slug === slug);
+  if (!project) return {};
+
+  return {
+    title: `${project.title} — NationsWorld Project`,
+    description: project.description,
+    openGraph: {
+      title: project.title,
+      description: project.description,
+      type: "article",
+      siteName: "NationsWorld",
+    },
+  };
 }
 
 export default async function ProjectDetailPage({

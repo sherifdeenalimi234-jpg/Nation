@@ -11,9 +11,31 @@ import {
   getPublishedOnly
 } from "@/lib/contentStore";
 import { Users, ArrowLeft, FolderGit2, GraduationCap, FileText, ArrowUpRight, ShieldCheck } from "lucide-react";
+import type { Metadata } from "next";
 
 export function generateStaticParams() {
   return TEAMS_DATA.map((t) => ({ slug: t.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const team = TEAMS_DATA.find((t) => t.slug === slug);
+  if (!team) return {};
+
+  return {
+    title: `${team.name} — NationsWorld Secretariat`,
+    description: team.description,
+    openGraph: {
+      title: team.name,
+      description: team.description,
+      type: "profile",
+      siteName: "NationsWorld",
+    },
+  };
 }
 
 export default async function TeamDetailPage({

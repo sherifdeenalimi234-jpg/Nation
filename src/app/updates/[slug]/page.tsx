@@ -4,10 +4,32 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { UPDATES_DATA } from "@/lib/contentStore";
-import { Newspaper, ArrowLeft, Calendar, Tag, ArrowUpRight } from "lucide-react";
+import { Newspaper, ArrowLeft, Calendar, ArrowUpRight } from "lucide-react";
+import type { Metadata } from "next";
 
 export function generateStaticParams() {
   return UPDATES_DATA.map((u) => ({ slug: u.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const update = UPDATES_DATA.find((u) => u.slug === slug);
+  if (!update) return {};
+
+  return {
+    title: `${update.title} — NationsWorld Newsroom`,
+    description: update.description,
+    openGraph: {
+      title: update.title,
+      description: update.description,
+      type: "article",
+      siteName: "NationsWorld",
+    },
+  };
 }
 
 export default async function UpdateDetailPage({
