@@ -1,16 +1,11 @@
-
-> nationsworld@0.1.0 dev
-> next dev
-
+$ next dev
 ▲ Next.js 16.3.1 (Turbopack)
 - Local:         http://localhost:3000
 - Network:       http://192.168.0.2:3000
-✓ Ready in 827ms
-✓ Running next.config.ts took 205ms
+✓ Ready in 573ms
+✓ Running next.config.ts took 46ms
 
-○ Compiling / ...
- HEAD / 200 in 7.1s (next.js: 6.5s, application-code: 576ms)
- GET / 200 in 112ms (next.js: 12ms, application-code: 100ms)
- GET /teams 200 in 1222ms (next.js: 869ms, application-code: 353ms)
- GET /organisations 200 in 548ms (next.js: 388ms, application-code: 161ms)
- GET /participate 200 in 616ms (next.js: 426ms, application-code: 190ms)
+ GET / 200 in 3.9s (next.js: 3.3s, application-code: 620ms)
+ GET / 200 in 117ms (next.js: 14ms, application-code: 103ms)
+ GET / 200 in 85ms (next.js: 6ms, application-code: 78ms)
+ POST /api/auth 200 in 653ms (next.js: 592ms, application-code: 61ms)

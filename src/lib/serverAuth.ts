@@ -38,15 +38,19 @@ export function getDriveFolderForSector(sector: string): { folderName: string; r
   let folderName = "04 — Projects";
   switch (sector.toLowerCase()) {
     case "teams":
+    case "team":
       folderName = "02 — Teams";
       break;
     case "organisations":
+    case "organisation":
       folderName = "03 — Organisations";
       break;
     case "projects":
+    case "project":
       folderName = "04 — Projects";
       break;
     case "programmes":
+    case "programme":
     case "events":
       folderName = "05 — Programmes & Events";
       break;
@@ -54,11 +58,15 @@ export function getDriveFolderForSector(sector: string): { folderName: string; r
       folderName = "06 — Opportunities";
       break;
     case "publications":
+    case "publication":
       folderName = "07 — Knowledge & Publications";
       break;
+    case "updates":
+    case "update":
     case "media":
       folderName = "08 — Media";
       break;
+    case "impact":
     case "submissions":
       folderName = "09 — Submissions";
       break;
