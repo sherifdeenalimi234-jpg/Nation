@@ -13,6 +13,7 @@ export const OFFICIAL_GOOGLE_DRIVE_FOLDER_URL =
   "https://drive.google.com/drive/folders/1OzUYFQLXCuD0-6kpm2yfUY_ZNU21uLSv";
 
 export const OFFICIAL_APPS_SCRIPT_ENDPOINT =
+  process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_ENDPOINT ||
   process.env.GOOGLE_APPS_SCRIPT_ENDPOINT ||
   "https://script.google.com/macros/s/nationsworld_digital_hub_exec/exec";
 
