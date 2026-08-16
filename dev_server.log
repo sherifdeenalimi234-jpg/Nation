@@ -11,3 +11,5 @@ $ next dev
  POST /api/auth 200 in 653ms (next.js: 592ms, application-code: 61ms)
  GET / 200 in 582ms (next.js: 58ms, application-code: 524ms)
  POST /api/auth 200 in 44ms (next.js: 10ms, application-code: 34ms)
+ GET / 200 in 426ms (next.js: 122ms, application-code: 304ms)
+ POST /api/auth 200 in 22ms (next.js: 9ms, application-code: 13ms)
