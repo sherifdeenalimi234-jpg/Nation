@@ -1,4 +1,20 @@
-// Server-side Authorised Email & Session Verification Layer
+// Secure Creator Authentication & Official Google Resources Layer
+
+export const OFFICIAL_GOOGLE_SHEET_ID =
+  process.env.GOOGLE_SHEET_ID || "1F1Q5QUeFa-GYb5MoFFFZUliUqaRK5WsuQ4_1JZY_4W4";
+
+export const OFFICIAL_GOOGLE_SHEET_URL =
+  "https://docs.google.com/spreadsheets/d/1F1Q5QUeFa-GYb5MoFFFZUliUqaRK5WsuQ4_1JZY_4W4/edit?usp=drivesdk";
+
+export const OFFICIAL_GOOGLE_DRIVE_FOLDER_ID =
+  process.env.GOOGLE_DRIVE_FOLDER_ID || "1OzUYFQLXCuD0-6kpm2yfUY_ZNU21uLSv";
+
+export const OFFICIAL_GOOGLE_DRIVE_FOLDER_URL =
+  "https://drive.google.com/drive/folders/1OzUYFQLXCuD0-6kpm2yfUY_ZNU21uLSv";
+
+export const OFFICIAL_APPS_SCRIPT_ENDPOINT =
+  process.env.GOOGLE_APPS_SCRIPT_ENDPOINT ||
+  "https://script.google.com/macros/s/nationsworld_digital_hub_exec/exec";
 
 const AUTHORISED_CREATORS = [
   "sherifdeenalimititilope@gmail.com",
@@ -18,26 +34,38 @@ export function isServerAuthorised(email?: string | null): boolean {
   return AUTHORISED_CREATORS.some((a) => a.toLowerCase() === normalized);
 }
 
-export function getDriveFolderForSector(sector: string): string {
+export function getDriveFolderForSector(sector: string): { folderName: string; rootDriveUrl: string } {
+  let folderName = "04 — Projects";
   switch (sector.toLowerCase()) {
     case "teams":
-      return "02 — Teams";
+      folderName = "02 — Teams";
+      break;
     case "organisations":
-      return "03 — Organisations";
+      folderName = "03 — Organisations";
+      break;
     case "projects":
-      return "04 — Projects";
+      folderName = "04 — Projects";
+      break;
     case "programmes":
     case "events":
-      return "05 — Programmes & Events";
+      folderName = "05 — Programmes & Events";
+      break;
     case "opportunities":
-      return "06 — Opportunities";
+      folderName = "06 — Opportunities";
+      break;
     case "publications":
-      return "07 — Knowledge & Publications";
+      folderName = "07 — Knowledge & Publications";
+      break;
     case "media":
-      return "08 — Media";
+      folderName = "08 — Media";
+      break;
     case "submissions":
-      return "09 — Submissions";
-    default:
-      return "04 — Projects";
+      folderName = "09 — Submissions";
+      break;
   }
+
+  return {
+    folderName,
+    rootDriveUrl: OFFICIAL_GOOGLE_DRIVE_FOLDER_URL,
+  };
 }
