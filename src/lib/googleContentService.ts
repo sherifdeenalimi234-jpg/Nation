@@ -24,14 +24,18 @@ import {
   getDriveFolderForSector
 } from "./serverAuth";
 
-// Dynamic in-memory persistent stores so published items immediately appear on public pages
-let dynamicProjects: ProjectItem[] = [...PROJECTS_DATA];
-let dynamicOrganisations: OrganisationItem[] = [...ORGANISATIONS_DATA];
-let dynamicProgrammes: ProgrammeItem[] = [...PROGRAMMES_DATA];
+// Isolated DEMO_MODE toggle (development only)
+export const IS_DEMO_MODE = process.env.DEMO_MODE === "true";
+
+// Dynamic published records store (Starts empty in production unless DEMO_MODE=true or seeded with 14 foundational teams)
+let dynamicProjects: ProjectItem[] = IS_DEMO_MODE ? [...PROJECTS_DATA] : [];
+let dynamicOrganisations: OrganisationItem[] = IS_DEMO_MODE ? [...ORGANISATIONS_DATA] : [];
+let dynamicProgrammes: ProgrammeItem[] = IS_DEMO_MODE ? [...PROGRAMMES_DATA] : [];
+// Foundational teams remain present as the core 14 NationsWorld directorate framework
 let dynamicTeams: TeamItem[] = [...TEAMS_DATA];
-let dynamicPublications: PublicationItem[] = [...PUBLICATIONS_DATA];
-let dynamicUpdates: UpdateItem[] = [...UPDATES_DATA];
-let dynamicImpactMetrics: ImpactMetricItem[] = [...IMPACT_METRICS_DATA];
+let dynamicPublications: PublicationItem[] = IS_DEMO_MODE ? [...PUBLICATIONS_DATA] : [];
+let dynamicUpdates: UpdateItem[] = IS_DEMO_MODE ? [...UPDATES_DATA] : [];
+let dynamicImpactMetrics: ImpactMetricItem[] = IS_DEMO_MODE ? [...IMPACT_METRICS_DATA] : [];
 
 export interface FileUploadPayload {
   name: string;
@@ -49,6 +53,7 @@ export class GoogleContentService {
       driveFolderId: OFFICIAL_GOOGLE_DRIVE_FOLDER_ID,
       driveFolderUrl: OFFICIAL_GOOGLE_DRIVE_FOLDER_URL,
       appsScriptEndpoint: OFFICIAL_APPS_SCRIPT_ENDPOINT,
+      isDemoMode: IS_DEMO_MODE,
     };
   }
 

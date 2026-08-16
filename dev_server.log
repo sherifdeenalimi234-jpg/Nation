@@ -9,3 +9,5 @@ $ next dev
  GET / 200 in 117ms (next.js: 14ms, application-code: 103ms)
  GET / 200 in 85ms (next.js: 6ms, application-code: 78ms)
  POST /api/auth 200 in 653ms (next.js: 592ms, application-code: 61ms)
+ GET / 200 in 582ms (next.js: 58ms, application-code: 524ms)
+ POST /api/auth 200 in 44ms (next.js: 10ms, application-code: 34ms)
