@@ -8,6 +8,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  ChevronDown,
   Compass,
   Users,
   FolderGit2,
@@ -20,19 +21,20 @@ import {
   Lock,
   Edit3,
   CheckCircle2,
-  Image as ImageIcon,
   Plus,
   Eye,
   Send,
-  MessageCircle,
   AlertCircle,
   Upload,
   FileCheck,
   ShieldAlert,
-  Calendar,
-  MapPin,
-  Link as LinkIcon,
-  UserCheck
+  UserCheck,
+  Home,
+  HelpCircle,
+  Factory,
+  Mail,
+  Info,
+  Layers
 } from "lucide-react";
 import {
   getCreatorSession,
@@ -59,22 +61,10 @@ import {
 } from "@/lib/creationEngine";
 import { TEAMS_DATA } from "@/lib/contentStore";
 
-const NAV_ITEMS = [
-  { name: "Explore", href: "/explore", icon: Compass },
-  { name: "Teams", href: "/teams", icon: Users },
-  { name: "Projects", href: "/projects", icon: FolderGit2 },
-  { name: "Organisations", href: "/organisations", icon: Building2 },
-  { name: "Programmes", href: "/programmes", icon: GraduationCap },
-  { name: "Publications", href: "/publications", icon: FileText },
-  { name: "Updates", href: "/updates", icon: Newspaper },
-  { name: "Impact", href: "/impact", icon: Sparkles },
-  { name: "About", href: "/about", icon: Globe },
-  { name: "Participate", href: "/participate", icon: UserCheck },
-];
-
 export function Header() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [membershipDropdownOpen, setMembershipDropdownOpen] = useState(false);
 
   // Creator Session State
   const [session, setSession] = useState<CreatorSession | null>(null);
@@ -162,7 +152,7 @@ export function Header() {
       setShowAuthModal(false);
       setAuthEmailInput("");
       showToast("Creator Access Granted");
-    } catch (err) {
+    } catch {
       setAuthError("Server authentication check failed. Please try again.");
     }
   };
@@ -224,7 +214,6 @@ export function Header() {
         const driveUrl = data.fileUrl;
         showToast(`Uploaded to Drive Subfolder: ${data.folderName || "NationsWorld"}`);
 
-        // Update target field in current active schema
         if (selectedType === "Project") {
           setProjectForm(prev => ({ ...prev, [targetField]: driveUrl }));
         } else if (selectedType === "Organisation") {
@@ -243,13 +232,12 @@ export function Header() {
       };
 
       reader.readAsDataURL(file);
-    } catch (err) {
+    } catch {
       setUploadingFile(false);
       showToast("Failed to upload file to Google Drive. Transaction aborted.");
     }
   };
 
-  // Get active record payload & title validation
   const getActiveRecord = () => {
     switch (selectedType) {
       case "Project": return { record: projectForm, title: projectForm.projectTitle, desc: projectForm.shortDescription };
@@ -308,7 +296,7 @@ export function Header() {
       setPipelineResult(data);
       setPortalMode("published");
       showToast("Published Successfully to Google Sheet & Website");
-    } catch (err) {
+    } catch {
       setPublishing(false);
       showToast("Publication pipeline failed. Your record was not published.");
     }
@@ -318,18 +306,18 @@ export function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#00172e]/90 backdrop-blur-md border-b border-white/10 py-3 shadow-2xl"
-          : "bg-transparent py-5 border-b border-white/5"
+          ? "bg-[#00172e] border-b border-white/10 py-3 shadow-2xl"
+          : "bg-[#00172e] py-4 border-b border-white/5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
 
-          {/* Brand Logo */}
+          {/* Brand Logo - Left */}
           <Link
             href="/"
             className="group flex items-center gap-3 focus:outline-none"
-            onClick={() => setIsMobileMenuOpen(false)}
+            onClick={() => setIsMenuOpen(false)}
           >
             <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-[#2F9148] p-[1px] transition-transform duration-300 group-hover:scale-105">
               <div className="w-full h-full bg-[#00172e] rounded-[11px] flex items-center justify-center">
@@ -337,83 +325,46 @@ export function Header() {
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
+              <span className="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
                 NATIONSWORLD
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#2F9148] animate-pulse" />
               </span>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 -mt-1">
-                Institutional Platform
+              <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-slate-300 -mt-1 font-semibold">
+                NATIONSWORLD OF VISIONARY ADVANCEMENT
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 bg-[#002446]/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-            {NAV_ITEMS.slice(0, 6).map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`px-3.5 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
-                    isActive
-                      ? "text-white bg-[#2F9148] shadow-md shadow-[#2F9148]/30"
-                      : "text-slate-300 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Creator & CTA Controls */}
+          {/* Controls - Right */}
           <div className="flex items-center gap-3">
-            {session?.isAuthorised ? (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    setPortalMode("select_type");
-                    setShowCreatePortal(true);
-                  }}
-                  className="px-3.5 py-1.5 text-xs font-semibold text-white bg-[#2F9148] hover:bg-[#37a854] rounded-lg transition-colors flex items-center gap-1.5 shadow-md shadow-[#2F9148]/20"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Create Content</span>
-                </button>
-                <button
-                  onClick={handleSignOut}
-                  className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-mono text-slate-400"
-                  title="Sign Out Creator Mode"
-                >
-                  Sign Out
-                </button>
-              </div>
-            ) : (
+            {session?.isAuthorised && (
               <button
-                onClick={() => setShowAuthModal(true)}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-slate-300 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-colors"
+                onClick={() => {
+                  setPortalMode("select_type");
+                  setShowCreatePortal(true);
+                }}
+                className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-[#2F9148] hover:bg-[#37a854] rounded-lg transition-colors shadow-md shadow-[#2F9148]/20"
               >
-                <Lock className="w-3 h-3 text-[#2F9148]" />
-                <span>Authorised Sign In</span>
+                <Plus className="w-3.5 h-3.5" />
+                <span>Create Content</span>
               </button>
             )}
 
-            <Link
-              href="/explore"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-[#2F9148] hover:bg-[#37a854] rounded-full transition-all duration-300 shadow-md shadow-[#2F9148]/20 active:scale-95"
-            >
-              <span>Explore Ecosystem</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </Link>
-
+            {/* Hamburger Menu Trigger Button */}
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-colors"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white border border-white/10 transition-colors flex items-center gap-2"
               aria-label="Toggle Navigation Menu"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6 text-[#2F9148]" /> : <Menu className="w-6 h-6" />}
+              <span className="text-xs font-mono uppercase tracking-wider hidden sm:inline text-slate-300">
+                Menu
+              </span>
+              {isMenuOpen ? (
+                <X className="w-5 h-5 text-[#2F9148]" />
+              ) : (
+                <Menu className="w-5 h-5 text-white" />
+              )}
             </button>
           </div>
         </div>
@@ -427,63 +378,234 @@ export function Header() {
         </div>
       )}
 
-      {/* Mobile Navigation Drawer */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 top-[65px] bg-[#00172e]/98 backdrop-blur-xl z-40 lg:hidden flex flex-col justify-between p-6 overflow-y-auto border-t border-white/10">
-          <div className="space-y-6">
-            <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-slate-400 pb-2 border-b border-white/10">
-              <span>Navigation Directory</span>
-              <span className="text-[#2F9148]">10 Sectors</span>
+      {/* Hamburger Navigation Menu Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 top-[65px] bg-[#00172e] z-40 flex flex-col justify-between p-6 sm:p-10 overflow-y-auto border-t border-white/10">
+          <div className="max-w-3xl mx-auto w-full space-y-6">
+
+            <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-slate-400 pb-3 border-b border-white/10">
+              <span>Main Navigation</span>
+              <span className="text-[#2F9148]">NationsWorld Ecosystem</span>
             </div>
 
-            <div className="grid grid-cols-1 gap-2">
-              {NAV_ITEMS.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
-                      isActive
-                        ? "bg-[#2F9148]/20 border-[#2F9148] text-white"
-                        : "bg-[#002446] border-white/5 text-slate-200 hover:bg-white/5"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${isActive ? 'bg-[#2F9148] text-white' : 'bg-white/5 text-[#2F9148]'}`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <span className="text-sm font-semibold">{item.name}</span>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-slate-500" />
-                  </Link>
-                );
-              })}
-            </div>
+            <nav className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm font-medium">
+
+              {/* Home */}
+              <Link
+                href="/"
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
+                  pathname === "/"
+                    ? "bg-[#2F9148]/20 border-[#2F9148] text-white"
+                    : "bg-[#002446] border-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Home className="w-4 h-4 text-[#2F9148]" />
+                  <span>Home</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </Link>
+
+              {/* About */}
+              <Link
+                href="/about"
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
+                  pathname === "/about"
+                    ? "bg-[#2F9148]/20 border-[#2F9148] text-white"
+                    : "bg-[#002446] border-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Info className="w-4 h-4 text-[#2F9148]" />
+                  <span>About</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </Link>
+
+              {/* Teams & Institutes */}
+              <Link
+                href="/teams"
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
+                  pathname === "/teams"
+                    ? "bg-[#2F9148]/20 border-[#2F9148] text-white"
+                    : "bg-[#002446] border-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Users className="w-4 h-4 text-[#2F9148]" />
+                  <span>Teams & Institutes</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </Link>
+
+              {/* Programmes & Initiatives */}
+              <Link
+                href="/programmes"
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
+                  pathname === "/programmes"
+                    ? "bg-[#2F9148]/20 border-[#2F9148] text-white"
+                    : "bg-[#002446] border-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <GraduationCap className="w-4 h-4 text-[#2F9148]" />
+                  <span>Programmes & Initiatives</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </Link>
+
+              {/* How It Works */}
+              <Link
+                href="/how-it-works"
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
+                  pathname === "/how-it-works"
+                    ? "bg-[#2F9148]/20 border-[#2F9148] text-white"
+                    : "bg-[#002446] border-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Layers className="w-4 h-4 text-[#2F9148]" />
+                  <span>How It Works</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </Link>
+
+              {/* Production */}
+              <Link
+                href="/production"
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
+                  pathname === "/production"
+                    ? "bg-[#2F9148]/20 border-[#2F9148] text-white"
+                    : "bg-[#002446] border-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Factory className="w-4 h-4 text-[#2F9148]" />
+                  <span>Production</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </Link>
+
+              {/* FAQ */}
+              <Link
+                href="/faq"
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
+                  pathname === "/faq"
+                    ? "bg-[#2F9148]/20 border-[#2F9148] text-white"
+                    : "bg-[#002446] border-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <HelpCircle className="w-4 h-4 text-[#2F9148]" />
+                  <span>FAQ</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </Link>
+
+              {/* Membership (Expandable / Nested Submenu) */}
+              <div className="col-span-1 md:col-span-2 rounded-xl border border-white/10 bg-[#002446] overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setMembershipDropdownOpen(!membershipDropdownOpen)}
+                  className="w-full flex items-center justify-between p-3.5 text-slate-200 hover:text-white transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <UserCheck className="w-4 h-4 text-[#2F9148]" />
+                    <span className="font-semibold">Membership</span>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${membershipDropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {(membershipDropdownOpen || pathname.startsWith("/membership")) && (
+                  <div className="px-3 pb-3 space-y-1 bg-[#00172e] border-t border-white/5 pt-2">
+                    <Link
+                      href="/membership"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center justify-between p-2.5 rounded-lg text-xs font-mono text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#2F9148]" />
+                        Membership Portal
+                      </span>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-[#2F9148]" />
+                    </Link>
+
+                    <Link
+                      href="/membership#apply"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center justify-between p-2.5 rounded-lg text-xs font-mono text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        Apply for Membership
+                      </span>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Contact */}
+              <Link
+                href="/contact"
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all col-span-1 md:col-span-2 ${
+                  pathname === "/contact"
+                    ? "bg-[#2F9148]/20 border-[#2F9148] text-white"
+                    : "bg-[#002446] border-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Mail className="w-4 h-4 text-[#2F9148]" />
+                  <span>Contact</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </Link>
+
+            </nav>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-white/10 space-y-4">
-            {!session?.isAuthorised && (
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setShowAuthModal(true);
-                }}
-                className="w-full py-2.5 px-4 text-xs font-mono text-slate-300 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center gap-2"
-              >
-                <Lock className="w-3.5 h-3.5 text-[#2F9148]" />
-                <span>Authorised Sign In</span>
-              </button>
-            )}
+          {/* Footer Controls within Hamburger Drawer */}
+          <div className="max-w-3xl mx-auto w-full mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {session?.isAuthorised ? (
+                <div className="flex items-center gap-2 text-xs font-mono text-slate-300">
+                  <span className="w-2 h-2 rounded-full bg-[#2F9148]" />
+                  <span>Authorised: {session.email}</span>
+                  <button
+                    onClick={handleSignOut}
+                    className="ml-2 text-red-400 hover:underline"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    setShowAuthModal(true);
+                  }}
+                  className="px-3.5 py-2 text-xs font-mono text-slate-300 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 flex items-center gap-2"
+                >
+                  <Lock className="w-3.5 h-3.5 text-[#2F9148]" />
+                  <span>Authorised Creator Sign In</span>
+                </button>
+              )}
+            </div>
 
             <Link
-              href="/explore"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="w-full py-2.5 px-4 text-xs font-semibold text-center text-white bg-[#2F9148] rounded-lg transition-colors flex items-center justify-center gap-2"
+              href="/membership#apply"
+              onClick={() => setIsMenuOpen(false)}
+              className="w-full sm:w-auto px-6 py-2.5 text-xs font-semibold text-center text-white bg-[#2F9148] hover:bg-[#37a854] rounded-xl transition-all shadow-md shadow-[#2F9148]/20 flex items-center justify-center gap-2"
             >
-              <span>Enter Ecosystem</span>
+              <span>Apply for Membership</span>
               <ArrowUpRight className="w-4 h-4" />
             </Link>
           </div>
@@ -533,7 +655,7 @@ export function Header() {
 
               <button
                 type="submit"
-                className="w-full py-3 px-4 rounded-xl bg-[#2F9148] hover:bg-[#37a854] text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-[#2F9148]/20"
+                className="w-full py-3 px-4 rounded-xl bg-[#2F9148] hover:bg-[#37a854] text-[#ffffff] text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-[#2F9148]/20"
               >
                 <span>Authenticate Creator Account</span>
                 <ChevronRight className="w-4 h-4" />
@@ -766,55 +888,6 @@ export function Header() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Objectives</label>
-                        <textarea
-                          rows={2}
-                          value={projectForm.objectives}
-                          onChange={(e) => setProjectForm({ ...projectForm, objectives: e.target.value })}
-                          placeholder="Key core objectives..."
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Key Activities</label>
-                        <textarea
-                          rows={2}
-                          value={projectForm.keyActivities}
-                          onChange={(e) => setProjectForm({ ...projectForm, keyActivities: e.target.value })}
-                          placeholder="Primary working groups & activities..."
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Target Beneficiaries</label>
-                        <input
-                          type="text"
-                          value={projectForm.targetBeneficiaries}
-                          onChange={(e) => setProjectForm({ ...projectForm, targetBeneficiaries: e.target.value })}
-                          placeholder="e.g. Member State Envoys, Academic Institutions"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Expected Outcomes</label>
-                        <input
-                          type="text"
-                          value={projectForm.expectedOutcomes}
-                          onChange={(e) => setProjectForm({ ...projectForm, expectedOutcomes: e.target.value })}
-                          placeholder="e.g. Ratified Treaty Framework"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Google Drive File Upload Pipeline */}
                     <div className="p-4 rounded-xl bg-[#00172e] border border-white/10 space-y-3">
                       <div className="flex items-center justify-between text-xs font-mono text-slate-300">
                         <span className="flex items-center gap-1.5 text-[#2F9148]">
@@ -888,65 +961,6 @@ export function Header() {
                       />
                     </div>
 
-                    <div>
-                      <label className="text-xs font-mono text-slate-300 block mb-1">Mission Statement</label>
-                      <textarea
-                        rows={2}
-                        value={orgForm.mission}
-                        onChange={(e) => setOrgForm({ ...orgForm, mission: e.target.value })}
-                        placeholder="Institutional mission and primary directive..."
-                        className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Focus Areas</label>
-                        <input
-                          type="text"
-                          value={orgForm.focusAreas}
-                          onChange={(e) => setOrgForm({ ...orgForm, focusAreas: e.target.value })}
-                          placeholder="e.g. Higher Education, Climate Diplomacy"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Location / Headquarters</label>
-                        <input
-                          type="text"
-                          value={orgForm.location}
-                          onChange={(e) => setOrgForm({ ...orgForm, location: e.target.value })}
-                          placeholder="e.g. Geneva / Global"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Website URL</label>
-                        <input
-                          type="url"
-                          value={orgForm.website}
-                          onChange={(e) => setOrgForm({ ...orgForm, website: e.target.value })}
-                          placeholder="https://..."
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Contact Information</label>
-                        <input
-                          type="text"
-                          value={orgForm.contactInfo}
-                          onChange={(e) => setOrgForm({ ...orgForm, contactInfo: e.target.value })}
-                          placeholder="e.g. secretariat@nationsworld.org"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-                    </div>
-
                     <div className="p-4 rounded-xl bg-[#00172e] border border-white/10 space-y-3">
                       <div className="flex items-center justify-between text-xs font-mono text-slate-300">
                         <span className="flex items-center gap-1.5 text-[#2F9148]">
@@ -1015,69 +1029,6 @@ export function Header() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Lead Team</label>
-                        <select
-                          value={progForm.leadTeam}
-                          onChange={(e) => setProgForm({ ...progForm, leadTeam: e.target.value })}
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        >
-                          {TEAMS_DATA.map((t) => (
-                            <option key={t.slug} value={t.slug}>{t.name}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Target Participants & Eligibility</label>
-                        <input
-                          type="text"
-                          value={progForm.targetParticipants}
-                          onChange={(e) => setProgForm({ ...progForm, targetParticipants: e.target.value })}
-                          placeholder="e.g. Emerging Scholars, Diplomatic Envoys"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Programme Status</label>
-                        <select
-                          value={progForm.programmeStatus}
-                          onChange={(e) => setProgForm({ ...progForm, programmeStatus: e.target.value as any })}
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        >
-                          <option value="Upcoming">Upcoming</option>
-                          <option value="Ongoing">Ongoing</option>
-                          <option value="Completed">Completed</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Start Date / Period</label>
-                        <input
-                          type="text"
-                          value={progForm.startDate}
-                          onChange={(e) => setProgForm({ ...progForm, startDate: e.target.value })}
-                          placeholder="e.g. Oct 2026"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Location / Platform</label>
-                        <input
-                          type="text"
-                          value={progForm.location}
-                          onChange={(e) => setProgForm({ ...progForm, location: e.target.value })}
-                          placeholder="e.g. Hybrid / Geneva"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-                    </div>
-
                     <div className="p-4 rounded-xl bg-[#00172e] border border-white/10 space-y-3">
                       <div className="flex items-center justify-between text-xs font-mono text-slate-300">
                         <span className="flex items-center gap-1.5 text-[#2F9148]">
@@ -1143,44 +1094,6 @@ export function Header() {
                         className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
                       />
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Focus Areas</label>
-                        <input
-                          type="text"
-                          value={teamForm.focusAreas}
-                          onChange={(e) => setTeamForm({ ...teamForm, focusAreas: e.target.value })}
-                          placeholder="e.g. Cryptographic Standards, AI Ethics"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Leadership Information</label>
-                        <input
-                          type="text"
-                          value={teamForm.leadershipInfo}
-                          onChange={(e) => setTeamForm({ ...teamForm, leadershipInfo: e.target.value })}
-                          placeholder="e.g. Director General / Chair"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="p-4 rounded-xl bg-[#00172e] border border-white/10 space-y-3">
-                      <div className="flex items-center justify-between text-xs font-mono text-slate-300">
-                        <span className="flex items-center gap-1.5 text-[#2F9148]">
-                          <Upload className="w-4 h-4" />
-                          Team Charter / Image Attachment (Google Drive Folder: 02 — Teams)
-                        </span>
-                      </div>
-                      <input
-                        type="file"
-                        onChange={(e) => handleFileUpload(e, "teamImageUrl")}
-                        className="text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#2F9148] file:text-white cursor-pointer"
-                      />
-                    </div>
                   </div>
                 )}
 
@@ -1222,30 +1135,6 @@ export function Header() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Author(s)</label>
-                        <input
-                          type="text"
-                          value={pubForm.authors}
-                          onChange={(e) => setPubForm({ ...pubForm, authors: e.target.value })}
-                          placeholder="e.g. Dr. Elena Rostova, Marcus Thorne"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Topic / Category</label>
-                        <input
-                          type="text"
-                          value={pubForm.topic}
-                          onChange={(e) => setPubForm({ ...pubForm, topic: e.target.value })}
-                          placeholder="e.g. Global Governance & Youth Policy"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-                    </div>
-
                     <div>
                       <label className="text-xs font-mono text-slate-300 block mb-1">Short Summary / Abstract *</label>
                       <textarea
@@ -1256,52 +1145,6 @@ export function Header() {
                         placeholder="Abstract or executive summary of the paper..."
                         className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
                       />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Related Team</label>
-                        <select
-                          value={pubForm.relatedTeam}
-                          onChange={(e) => setPubForm({ ...pubForm, relatedTeam: e.target.value })}
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        >
-                          {TEAMS_DATA.map((t) => (
-                            <option key={t.slug} value={t.slug}>{t.name}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">External URL (Optional)</label>
-                        <input
-                          type="url"
-                          value={pubForm.externalUrl}
-                          onChange={(e) => setPubForm({ ...pubForm, externalUrl: e.target.value })}
-                          placeholder="https://doi.org/..."
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Drive Publication File Upload */}
-                    <div className="p-4 rounded-xl bg-[#00172e] border border-white/10 space-y-3">
-                      <div className="flex items-center justify-between text-xs font-mono text-slate-300">
-                        <span className="flex items-center gap-1.5 text-[#2F9148]">
-                          <Upload className="w-4 h-4" />
-                          Publication File PDF/Doc (Uploads to Google Drive Folder: 07 — Knowledge & Publications)
-                        </span>
-                      </div>
-                      <input
-                        type="file"
-                        onChange={(e) => handleFileUpload(e, "publicationFileUrl")}
-                        className="text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#2F9148] file:text-white cursor-pointer"
-                      />
-                      {pubForm.publicationFileUrl && (
-                        <div className="p-2 bg-[#2F9148]/10 text-xs font-mono text-[#2F9148] rounded-lg">
-                          Drive URL: {pubForm.publicationFileUrl}
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}
@@ -1326,24 +1169,6 @@ export function Header() {
                           className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
                         />
                       </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Update Category</label>
-                        <select
-                          value={updateForm.updateCategory}
-                          onChange={(e) => setUpdateForm({ ...updateForm, updateCategory: e.target.value as any })}
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        >
-                          <option value="Announcement">Announcement</option>
-                          <option value="Project">Project News</option>
-                          <option value="Programme">Programme News</option>
-                          <option value="Opportunity">Opportunity</option>
-                          <option value="Publication">Publication News</option>
-                          <option value="Organisation">Organisation Update</option>
-                          <option value="Team">Team Update</option>
-                          <option value="General">General</option>
-                        </select>
-                      </div>
                     </div>
 
                     <div>
@@ -1357,31 +1182,6 @@ export function Header() {
                         className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
                       />
                     </div>
-
-                    <div>
-                      <label className="text-xs font-mono text-slate-300 block mb-1">Full Dispatch Content</label>
-                      <textarea
-                        rows={4}
-                        value={updateForm.fullContent}
-                        onChange={(e) => setUpdateForm({ ...updateForm, fullContent: e.target.value })}
-                        placeholder="Full release body text..."
-                        className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                      />
-                    </div>
-
-                    <div className="p-4 rounded-xl bg-[#00172e] border border-white/10 space-y-3">
-                      <div className="flex items-center justify-between text-xs font-mono text-slate-300">
-                        <span className="flex items-center gap-1.5 text-[#2F9148]">
-                          <Upload className="w-4 h-4" />
-                          Featured Image / Supporting Media (Google Drive Folder: 08 — Media)
-                        </span>
-                      </div>
-                      <input
-                        type="file"
-                        onChange={(e) => handleFileUpload(e, "supportingMediaUrl")}
-                        className="text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#2F9148] file:text-white cursor-pointer"
-                      />
-                    </div>
                   </div>
                 )}
 
@@ -1391,11 +1191,6 @@ export function Header() {
                     <div className="p-3.5 rounded-2xl bg-[#00172e] border border-[#2F9148]/30 flex items-center justify-between text-xs font-mono">
                       <span className="text-[#2F9148]">VERIFIED IMPACT SCHEMA FORM</span>
                       <span className="text-slate-400">ID: {impactForm.id}</span>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs flex items-start gap-2">
-                      <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
-                      <span>Validation Guardrail: Only submit verified impact metrics supported by accredited evidence. Unverified claims are flagged by the audit layer.</span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1433,44 +1228,6 @@ export function Header() {
                         onChange={(e) => setImpactForm({ ...impactForm, shortSummary: e.target.value })}
                         placeholder="Overview of the impact achievement..."
                         className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Impact Area / Domain</label>
-                        <input
-                          type="text"
-                          value={impactForm.impactArea}
-                          onChange={(e) => setImpactForm({ ...impactForm, impactArea: e.target.value })}
-                          placeholder="e.g. Youth Diplomatic Leadership"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-mono text-slate-300 block mb-1">Geographic Scope</label>
-                        <input
-                          type="text"
-                          value={impactForm.geographicScope}
-                          onChange={(e) => setImpactForm({ ...impactForm, geographicScope: e.target.value })}
-                          placeholder="e.g. Global Consortium / West Africa"
-                          className="w-full bg-[#00172e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#2F9148]"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="p-4 rounded-xl bg-[#00172e] border border-white/10 space-y-3">
-                      <div className="flex items-center justify-between text-xs font-mono text-slate-300">
-                        <span className="flex items-center gap-1.5 text-[#2F9148]">
-                          <Upload className="w-4 h-4" />
-                          Evidence Documents / Verification File (Google Drive Folder: 09 — Submissions)
-                        </span>
-                      </div>
-                      <input
-                        type="file"
-                        onChange={(e) => handleFileUpload(e, "evidenceDocumentsUrl")}
-                        className="text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#2F9148] file:text-white cursor-pointer"
                       />
                     </div>
                   </div>
